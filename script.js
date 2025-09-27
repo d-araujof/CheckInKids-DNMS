@@ -1,4 +1,3 @@
-// --- Imports Firebase 12 ---
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import {
   getFirestore,
@@ -27,18 +26,21 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// --- Elementos HTML ---
-const checkinSection = document.getElementById("checkinSection");
-const listaHoje = document.getElementById("lista-checkins-hoje");
-const listaPesquisa = document.getElementById("lista-pesquisa");
-const pesquisa = document.getElementById("pesquisa");
-const formCadastro = document.getElementById("formCadastro");
-const tituloCadastro = document.getElementById("tituloCadastro");
+// --- Elementos ---
 const tabCheckin = document.getElementById("tabCheckin");
 const tabCadastro = document.getElementById("tabCadastro");
+const checkinSection = document.getElementById("checkinSection");
 const cadastroSection = document.getElementById("cadastroSection");
 const dataInput = document.getElementById("dataCheckin");
-const dataSelecionadaEl = document.getElementById("dataSelecionada");
+const pesquisa = document.getElementById("pesquisa");
+const listaPesquisa = document.getElementById("lista-pesquisa");
+const listaPrimeiro = document.getElementById("lista-checkins-primeiro");
+const listaSegundo = document.getElementById("lista-checkins-segundo");
+const countPrimeiro = document.getElementById("count-primeiro");
+const countSegundo = document.getElementById("count-segundo");
+
+const formCadastro = document.getElementById("formCadastro");
+const tituloCadastro = document.getElementById("tituloCadastro");
 
 const inputs = {
   nome: document.getElementById("nome"),
@@ -46,40 +48,34 @@ const inputs = {
   responsavel: document.getElementById("responsavel"),
   telefone: document.getElementById("telefone"),
   alergias: document.getElementById("alergias"),
-  banheiro: document.getElementById("banheiro"),
-  pulseira: document.getElementById("pulseira")
+  banheiro: document.getElementById("banheiro")
 };
 
 let editandoId = null;
 let unsubscribeCheckins = null;
 let criancasCache = [];
 
-// --- Preenche data com hoje ---
+// --- Data hoje ---
 const hoje = new Date();
-const dia = String(hoje.getDate()).padStart(2, "0");
-const mes = String(hoje.getMonth() + 1).padStart(2, "0");
-const ano = hoje.getFullYear();
-dataInput.value = `${ano}-${mes}-${dia}`;
-let dataSelecionada = dataInput.value;
-dataSelecionadaEl.textContent = `Check-ins de ${dataSelecionada}`;
+dataInput.value = hoje.toISOString().slice(0,10);
 
 // --- Troca de abas ---
-tabCheckin.addEventListener("click", () => {
+tabCheckin.addEventListener("click", ()=>{
   tabCheckin.classList.add("active");
   tabCadastro.classList.remove("active");
   checkinSection.classList.remove("hidden");
   cadastroSection.classList.add("hidden");
 });
 
-tabCadastro.addEventListener("click", () => {
+tabCadastro.addEventListener("click", ()=>{
   tabCadastro.classList.add("active");
   tabCheckin.classList.remove("active");
   cadastroSection.classList.remove("hidden");
   checkinSection.classList.add("hidden");
 });
 
-// --- Salvar ou atualizar criança ---
-async function salvarCrianca(e) {
+// --- Salvar criança ---
+formCadastro.addEventListener("submit", async (e)=>{
   e.preventDefault();
   const nome = inputs.nome.value.trim();
   const idade = inputs.idade.value.trim();
@@ -88,136 +84,157 @@ async function salvarCrianca(e) {
   const alergias = inputs.alergias.value.trim();
   const banheiro = inputs.banheiro.checked;
 
-  if (!nome || !idade || !responsavel || !telefone) {
+  if(!nome || !idade || !responsavel || !telefone){
     alert("Preencha todos os campos obrigatórios!");
     return;
   }
 
-  if (editandoId) {
-    const ref = doc(db, "criancas", editandoId);
-    await updateDoc(ref, { nome, idade, responsavel, telefone, alergias, banheiroSozinho: banheiro });
-    editandoId = null;
-    tituloCadastro.textContent = "Novo Cadastro";
-  } else {
-    await addDoc(collection(db, "criancas"), { nome, idade, responsavel, telefone, alergias, banheiroSozinho: banheiro });
+  try{
+    if(editandoId){
+      await updateDoc(doc(db,"criancas",editandoId),{
+        nome, idade, responsavel, telefone, alergias, banheiroSozinho: banheiro
+      });
+      editandoId = null;
+      tituloCadastro.textContent = "Novo Cadastro";
+    } else {
+      await addDoc(collection(db,"criancas"),{
+        nome, idade, responsavel, telefone, alergias, banheiroSozinho: banheiro
+      });
+    }
+    formCadastro.reset();
+  } catch(err){
+    console.error(err);
+    alert("Erro ao salvar criança!");
   }
+});
 
-  formCadastro.reset();
-}
-
-// --- Carregar crianças para cache ---
-const qCriancas = query(collection(db, "criancas"), orderBy("nome"));
-onSnapshot(qCriancas, snapshot => {
-  criancasCache = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+// --- Cache de crianças ---
+onSnapshot(query(collection(db,"criancas"),orderBy("nome")), snapshot=>{
+  criancasCache = snapshot.docs.map(doc=>({id: doc.id, ...doc.data()}));
 });
 
 // --- Pesquisar crianças ---
-function pesquisarCriancas() {
-  const termo = pesquisa.value.trim().toLowerCase();
+pesquisa.addEventListener("input", ()=>{
   listaPesquisa.innerHTML = "";
+  const termo = pesquisa.value.trim().toLowerCase();
+  if(!termo) return;
 
-  if (!termo) return;
-
-  criancasCache.forEach(c => {
-    if (c.nome.toLowerCase().includes(termo)) {
+  criancasCache.forEach(c=>{
+    if(c.nome.toLowerCase().includes(termo)){
       const li = document.createElement("li");
       li.innerHTML = `
-        <strong>${c.nome}</strong> (${c.idade} anos) - Resp: ${c.responsavel}<br>
+        <strong>${c.nome}</strong> (${c.idade} anos)<br>
+        Resp: ${c.responsavel}<br>
         Tel: ${c.telefone}
-        ${c.alergias ? `<div class="alerta">⚠ ${c.alergias}</div>` : ""}
-        <div>Banheiro sozinho: ${c.banheiroSozinho ? "Sim" : "Não"}</div>
+        ${c.alergias?`<div class="alerta">⚠ ${c.alergias}</div>`:""}
+        <div>Banheiro sozinho: ${c.banheiroSozinho?"Sim":"Não"}</div>
         <input type="text" id="pulseira-${c.id}" placeholder="Nº pulseira">
         <button class="btn-checkin">Check-in</button>
         <button class="btn-editar">Editar</button>
       `;
       listaPesquisa.appendChild(li);
 
-      li.querySelector(".btn-checkin").addEventListener("click", () => checkin(c.id));
-      li.querySelector(".btn-editar").addEventListener("click", () => editar(c.id));
+      li.querySelector(".btn-checkin").addEventListener("click", ()=> checkin(c.id));
+      li.querySelector(".btn-editar").addEventListener("click", ()=> editar(c.id));
     }
   });
+});
+
+// --- Culto selecionado ---
+function getCultoSelecionado(){
+  const c = document.querySelector("input[name='culto']:checked");
+  return c ? c.value : "primeiro";
 }
 
 // --- Check-in ---
-async function checkin(idCrianca) {
+async function checkin(idCrianca){
   const pulseiraInput = document.getElementById(`pulseira-${idCrianca}`);
-  if (!pulseiraInput) return;
+  if(!pulseiraInput) return;
   const pulseira = pulseiraInput.value.trim();
-  if (!pulseira) return alert("Digite o número da pulseira!");
+  if(!pulseira) return alert("Digite o número da pulseira!");
 
   const data = dataInput.value;
-  if (!data) return alert("Selecione a data primeiro!");
+  if(!data) return alert("Selecione a data primeiro!");
+  const culto = getCultoSelecionado();
 
-  try {
-    await addDoc(collection(db, "checkins"), {
-      criancaId: idCrianca,
-      data,
-      pulseira,
-      presente: true
+  // Verifica check-in existente
+  const qExist = query(collection(db,"checkins"),
+    where("criancaId","==",idCrianca),
+    where("data","==",data),
+    where("culto","==",culto)
+  );
+  const snapshotExist = await getDocs(qExist);
+  if(!snapshotExist.empty) return alert(`Criança já registrada para o ${culto} culto hoje.`);
+
+  try{
+    await addDoc(collection(db,"checkins"),{
+      criancaId: idCrianca, data, pulseira, presente: true, culto
     });
-
-    // Limpa pesquisa
-    listaPesquisa.innerHTML = "";
     pesquisa.value = "";
-
-  } catch (error) {
-    console.error("Erro ao salvar check-in:", error);
-    alert("Erro ao salvar check-in no Firebase!");
+  } catch(err){
+    console.error(err);
+    alert("Erro ao salvar check-in!");
   }
+  carregarCheckinsHoje();
 }
 
-// --- Carregar check-ins por data ---
-function carregarCheckinsHoje() {
-  // Remove listener antigo, se existir
-  if (unsubscribeCheckins) unsubscribeCheckins();
+// --- Carregar check-ins ---
+function carregarCheckinsHoje(){
+  if(unsubscribeCheckins) unsubscribeCheckins();
+  const dataSelecionada = dataInput.value;
 
-  dataSelecionada = dataInput.value;
-  dataSelecionadaEl.textContent = `Check-ins de ${dataSelecionada}`;
+  const qCheckins = query(collection(db,"checkins"), where("data","==",dataSelecionada));
 
-  const qCheckins = query(collection(db, "checkins"), where("data", "==", dataSelecionada));
+  unsubscribeCheckins = onSnapshot(qCheckins, async snapshot=>{
+    listaPrimeiro.innerHTML = "";
+    listaSegundo.innerHTML = "";
 
-  unsubscribeCheckins = onSnapshot(qCheckins, async snapshot => {
-    listaHoje.innerHTML = "";
+    let countP = 0;
+    let countS = 0;
 
-    for (const docSnap of snapshot.docs) {
-      const checkin = docSnap.data();
-      const criancaSnap = await getDoc(doc(db, "criancas", checkin.criancaId));
-      const c = criancaSnap.data();
-
-      if (!c) continue;
+    for(const docSnap of snapshot.docs){
+      const ch = docSnap.data();
+      const criSnap = await getDoc(doc(db,"criancas",ch.criancaId));
+      const c = criSnap.data();
+      if(!c) continue;
 
       const li = document.createElement("li");
       li.innerHTML = `
-        <strong>${c.nome}</strong> - Pulseira: ${checkin.pulseira}<br>
+        <strong>${c.nome}</strong> - Pulseira: ${ch.pulseira}<br>
         Resp: ${c.responsavel} - Tel: ${c.telefone}
-        ${c.alergias ? `<div class="alerta">⚠ ${c.alergias}</div>` : ""}
+        ${c.alergias?`<div class="alerta">⚠ ${c.alergias}</div>`:""}
       `;
-      listaHoje.appendChild(li);
+
+      if(ch.culto === "primeiro"){
+        listaPrimeiro.appendChild(li);
+        countP++;
+      } else if(ch.culto === "segundo"){
+        listaSegundo.appendChild(li);
+        countS++;
+      }
     }
+
+    countPrimeiro.textContent = countP;
+    countSegundo.textContent = countS;
   });
 }
 
-// --- Editar criança ---
-async function editar(id) {
-  const ref = doc(db, "criancas", id);
-  const docSnap = await getDoc(ref);
+// --- Editar ---
+async function editar(id){
+  const docSnap = await getDoc(doc(db,"criancas",id));
   const c = docSnap.data();
-
-  Object.entries(inputs).forEach(([key, input]) => {
-    if (key === "banheiro") input.checked = c.banheiroSozinho;
-    else input.value = c[key] || "";
+  Object.entries(inputs).forEach(([key,input])=>{
+    if(key==="banheiro") input.checked = c.banheiroSozinho;
+    else input.value = c[key]||"";
   });
-
   editandoId = id;
-  inputs.pulseira.value = "";
   tabCadastro.click();
   tituloCadastro.textContent = `Editando: ${c.nome}`;
 }
 
-// --- Event listeners ---
-formCadastro.addEventListener("submit", salvarCrianca);
-pesquisa.addEventListener("input", pesquisarCriancas);
+// --- Eventos ---
 dataInput.addEventListener("change", carregarCheckinsHoje);
 
 // --- Inicializa ---
 carregarCheckinsHoje();
+
