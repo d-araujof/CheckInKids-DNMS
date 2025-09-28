@@ -6,6 +6,7 @@
   --laranja: #f79053;
   --fundo: #f8f8f8;
   --texto: #333;
+  --cinza: #6f6f6f;
 }
 
 * {
@@ -37,20 +38,48 @@ nav {
   margin-bottom: 1rem;
 }
 
-nav button {
-  flex: 1;
-  padding: 0.8rem;
-  border: none;
-  background: var(--azul);
+button,
+nav button,
+.culto-selection label,
+#lista-pesquisa li button {
+  background-color: var(--azul);
   color: white;
-  cursor: pointer;
-  font-weight: bold;
+  border: none;
   border-radius: 8px;
-  transition: all 0.2s ease;
+  padding: 0.8rem 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  text-align: center;
+  user-select: none;
 }
 
-nav button.active {
-  background: var(--vermelho);
+nav button {
+  width: 100%;
+}
+
+button.active,
+nav button.active,
+.culto-selection input[type="radio"]:checked + label {
+  background-color: var(--laranja);
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+button:hover,
+nav button:hover,
+.culto-selection label:hover,
+#lista-pesquisa li button:hover {
+  background-color: var(--verde);
+}
+
+input,
+select {
+  width: 100%;
+  padding: 0.6rem;
+  margin: 0.4rem 0;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
 }
 
 main {
@@ -61,54 +90,12 @@ h2 {
   color: var(--laranja);
 }
 
-/* Inputs e botões padrão */
-input, select, button {
-  width: 100%;
-  padding: 0.6rem;
-  margin: 0.4rem 0;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-
-button {
-  background-color: var(--azul);
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.2s ease;
-}
-
-button:hover {
-  background-color: var(--verde);
-  opacity: 0.9;
-  transform: scale(1.02);
-}
-
-.hidden {
-  display: none;
-}
-
-ul {
-  list-style: none;
-}
-
-li {
-  background: white;
-  margin: 0.5rem 0;
-  padding: 0.6rem;
-  border-radius: 8px;
-}
-
-/* Alerta */
 .alerta {
-  color: var(--vermelho);
+  color: var(--amarelo);
   font-weight: bold;
   margin-top: 0.2rem;
 }
 
-/* Culto selection */
 .culto-selection {
   display: flex;
   justify-content: center;
@@ -120,32 +107,6 @@ li {
   display: none;
 }
 
-.culto-selection label {
-  padding: 0.8rem 1.5rem;
-  border-radius: 8px;
-  background-color: var(--azul);
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: center;
-  user-select: none;
-  min-width: 120px;
-}
-
-.culto-selection label:hover {
-  background-color: var(--verde);
-  transform: scale(1.05);
-}
-
-.culto-selection input[type="radio"]:checked + label {
-  background-color: var(--vermelho);
-  color: white;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  transform: scale(1.1);
-}
-
-/* Container de check-ins */
 .checkins-container {
   display: flex;
   flex-wrap: wrap;
@@ -153,7 +114,6 @@ li {
   margin-top: 1rem;
 }
 
-/* Card de cada culto */
 .culto-card {
   flex: 1;
   min-width: 280px;
@@ -163,7 +123,6 @@ li {
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-/* Título do culto com contador */
 .culto-card h2 {
   font-size: 1.2rem;
   margin-bottom: 0.8rem;
@@ -172,7 +131,6 @@ li {
   align-items: center;
 }
 
-/* Item de criança nos cards */
 .culto-card li {
   background-color: #f1f0ff;
   margin: 1rem 0;
@@ -191,7 +149,6 @@ li {
   margin-top: 0.2rem;
 }
 
-/* Lista de pesquisa */
 #lista-pesquisa li {
   display: flex;
   flex-direction: column;
@@ -202,15 +159,6 @@ li {
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
-#lista-pesquisa li button {
-  width: 100%;
-  margin-top: 0.5rem;
-  border-radius: 8px;
-  padding: 0.8rem;
-  font-size: 1rem;
-  font-weight: bold;
-}
-
 #lista-pesquisa li input {
   width: 100%;
   margin-top: 0.3rem;
@@ -219,20 +167,11 @@ li {
   border: 1px solid #ccc;
 }
 
-/* Botões diferentes para ações */
-.btn-checkin {
-  background: var(--azul);
-}
-
+.btn-checkin,
 .btn-editar {
-  background: var(--azul);
+  width: 100%;
 }
 
-#lista-pesquisa li button:hover {
-  background-color: var(--verde);
-}
-
-/* Formulário de cadastro */
 #formCadastro {
   display: flex;
   flex-direction: column;
@@ -245,7 +184,7 @@ li {
 
 #formCadastro h2 {
   text-align: center;
-  margin-bottom: 10rem;
+  margin-bottom: 1rem;
 }
 
 #formCadastro label {
@@ -254,7 +193,35 @@ li {
   gap: 0.5rem;
 }
 
-/* Responsividade */
+#cadastroSection h2 {
+  margin-bottom: 1rem;
+}
+
+#dataNascimento{
+  color: var(--cinza);
+}
+
+#btn-whatsapp {
+  margin-top: 2rem;
+  padding: 0.8rem;
+  width: 100%;
+}
+
+.hidden {
+  display: none;
+}
+
+ul {
+  list-style: none;
+}
+
+li {
+  background: white;
+  margin: 0.5rem 0;
+  padding: 0.6rem;
+  border-radius: 8px;
+}
+
 @media (max-width: 600px) {
   .checkins-container {
     flex-direction: column;
@@ -266,11 +233,18 @@ li {
   }
 }
 
-#cadastroSection h2 {
-  margin-bottom: 1rem;
+/* Alinha o checkbox com o texto */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  color: var(--texto);
+  cursor: pointer;
 }
 
-#btn-whatsapp{
-  margin-top: 2rem;
-  padding: 0.8rem;
+.checkbox-label input {
+  width: auto;
+  margin: 0;
+  cursor: pointer;
 }
