@@ -57,13 +57,17 @@ main {
   padding: 1rem 0;
 }
 
-/* Inputs e botões */
-input, button {
+h2 {
+  color: var(--laranja);
+}
+
+/* Inputs e botões padrão */
+input, select, button {
   width: 100%;
   padding: 0.6rem;
   margin: 0.4rem 0;
   font-size: 1rem;
-  border-radius: 5px;
+  border-radius: 8px;
   border: 1px solid #ccc;
 }
 
@@ -72,11 +76,14 @@ button {
   color: white;
   border: none;
   cursor: pointer;
+  font-weight: bold;
   transition: all 0.2s ease;
 }
 
 button:hover {
+  background-color: var(--verde);
   opacity: 0.9;
+  transform: scale(1.02);
 }
 
 .hidden {
@@ -91,7 +98,7 @@ li {
   background: white;
   margin: 0.5rem 0;
   padding: 0.6rem;
-  border-radius: 5px;
+  border-radius: 8px;
 }
 
 /* Alerta */
@@ -115,7 +122,7 @@ li {
 
 .culto-selection label {
   padding: 0.8rem 1.5rem;
-  border-radius: 25px;
+  border-radius: 8px;
   background-color: var(--azul);
   color: white;
   font-weight: bold;
@@ -165,13 +172,23 @@ li {
   align-items: center;
 }
 
-/* Item de criança */
+/* Item de criança nos cards */
 .culto-card li {
-  background-color: #f0f8ff;
-  margin: 0.5rem 0;
-  padding: 0.6rem;
+  background-color: #f1f0ff;
+  margin: 1rem 0;
+  padding: 0.8rem;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.culto-card li strong {
+  display: block;
+  font-size: 1.05rem;
+  margin-bottom: 0.3rem;
+}
+
+.culto-card li div {
+  margin-top: 0.2rem;
 }
 
 /* Lista de pesquisa */
@@ -180,14 +197,18 @@ li {
   flex-direction: column;
   gap: 0.4rem;
   background-color: #ffffff;
-  padding: 0.6rem;
+  padding: 0.8rem;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
 #lista-pesquisa li button {
-  width: 48%;
-  margin-top: 0.3rem;
+  width: 100%;
+  margin-top: 0.5rem;
+  border-radius: 8px;
+  padding: 0.8rem;
+  font-size: 1rem;
+  font-weight: bold;
 }
 
 #lista-pesquisa li input {
@@ -198,13 +219,58 @@ li {
   border: 1px solid #ccc;
 }
 
+/* Botões diferentes para ações */
+.btn-checkin {
+  background: var(--azul);
+}
+
+.btn-editar {
+  background: var(--azul);
+}
+
+#lista-pesquisa li button:hover {
+  background-color: var(--verde);
+}
+
 /* Formulário de cadastro */
-#formCadastro input, #formCadastro button {
-  margin-bottom: 0.5rem;
+#formCadastro {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  background: white;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+#formCadastro h2 {
+  text-align: center;
+  margin-bottom: 10rem;
 }
 
 #formCadastro label {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+  .checkins-container {
+    flex-direction: column;
+  }
+
+  nav button {
+    font-size: 0.9rem;
+    padding: 0.6rem;
+  }
+}
+
+#cadastroSection h2 {
+  margin-bottom: 1rem;
+}
+
+#btn-whatsapp{
+  margin-top: 2rem;
+  padding: 0.8rem;
 }

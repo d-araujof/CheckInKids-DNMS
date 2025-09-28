@@ -1,73 +1,91 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>D.Kids Check-in</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <header>
-    <h1>D.Kids Check-in</h1>
-  </header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>D.Kids Check-in</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>D.Kids Check-in</h1>
+    </header>
 
-  <!-- Menu de abas -->
-  <nav>
-    <button id="tabCheckin" class="active">Check-in</button>
-    <button id="tabCadastro">Cadastro</button>
-  </nav>
+    <!-- Menu de abas -->
+    <nav>
+      <button id="tabCheckin" class="active">Check-in</button>
+      <button id="tabCadastro">Cadastro</button>
+    </nav>
 
-  <main>
-    <!-- Aba Check-in -->
-    <section id="checkinSection">
-      <!-- Seleção de data -->
-      <input type="date" id="dataCheckin" style="margin-bottom: 10px" />
+    <main>
+      <!-- Aba Check-in -->
+      <section id="checkinSection">
+        <!-- Seleção de data -->
+        <input type="date" id="dataCheckin" style="margin-bottom: 10px" />
 
-      <div class="culto-selection">
-        <input type="radio" name="culto" value="primeiro" id="primeiro" checked />
-        <label for="primeiro">Primeiro Culto</label>
+        <div class="culto-selection">
+          <input
+            type="radio"
+            name="culto"
+            value="primeiro"
+            id="primeiro"
+            checked
+          />
+          <label for="primeiro">Primeiro Culto</label>
 
-        <input type="radio" name="culto" value="segundo" id="segundo" />
-        <label for="segundo">Segundo Culto</label>
-      </div>
-
-      <!-- Pesquisa de crianças -->
-      <input type="text" id="pesquisa" placeholder="Pesquisar criança..." />
-      <ul id="lista-pesquisa"></ul>
-
-      <!-- Check-ins organizados em cards -->
-      <div class="checkins-container">
-        <div class="culto-card">
-          <h2>Primeiro Culto <span id="count-primeiro">0</span></h2>
-          <ul id="lista-checkins-primeiro"></ul>
+          <input type="radio" name="culto" value="segundo" id="segundo" />
+          <label for="segundo">Segundo Culto</label>
         </div>
 
-        <div class="culto-card">
-          <h2>Segundo Culto <span id="count-segundo">0</span></h2>
-          <ul id="lista-checkins-segundo"></ul>
+        <!-- Pesquisa de crianças -->
+        <input type="text" id="pesquisa" placeholder="Pesquisar criança..." />
+        <ul id="lista-pesquisa"></ul>
+
+        <!-- Check-ins organizados em cards -->
+        <div class="checkins-container">
+          <div class="culto-card">
+            <h2>Primeiro Culto <span id="count-primeiro">0</span></h2>
+            <ul id="lista-checkins-primeiro"></ul>
+          </div>
+
+          <div class="culto-card">
+            <h2>Segundo Culto <span id="count-segundo">0</span></h2>
+            <ul id="lista-checkins-segundo"></ul>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Aba Cadastro -->
-    <section id="cadastroSection" class="hidden">
-      <h2 id="tituloCadastro">Novo Cadastro</h2>
-      <form id="formCadastro">
-        <input type="text" id="nome" placeholder="Nome da criança" required />
-        <input type="number" id="idade" placeholder="Idade" required />
-        <input type="text" id="responsavel" placeholder="Nome do responsável" required />
-        <input type="text" id="telefone" placeholder="Telefone" required />
-        <input type="text" id="alergias" placeholder="Alergias" />
-        <label>
-          Banheiro sozinho:
-          <input type="checkbox" id="banheiro" />
-        </label>
-        <button type="submit" id="btnCadastrar">Salvar</button>
-      </form>
-    </section>
-  </main>
+      <!-- Aba Cadastro -->
+      <section id="cadastroSection" class="hidden">
+        <h2 id="tituloCadastro">Novo Cadastro</h2>
+        <form id="formCadastro">
+          <input type="text" id="nome" placeholder="Nome da criança" required />
+          <input
+            type="date"
+            id="dataNascimento"
+            placeholder="Data de Nascimento"
+            required
+          />
+          <input
+            type="text"
+            id="responsavel"
+            placeholder="Nome do responsável"
+            required
+          />
+          <input type="text" id="telefone" placeholder="Telefone" required />
+          <input type="text" id="alergias" placeholder="Alergias" />
+          <label>
+            Banheiro sozinho:
+            <input type="checkbox" id="banheiro" />
+          </label>
+          <button type="submit" id="btnCadastrar">Salvar</button>
+        </form>
+      </section>
 
-  <script type="module" src="script.js"></script>
-</body>
+      <!-- Relatório do dia -->
+       <button id="btn-whatsapp">Enviar lista para WhatsApp</button>
+    </main>
+
+    <script type="module" src="script.js"></script>
+  </body>
 </html>
-
